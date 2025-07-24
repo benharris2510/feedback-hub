@@ -1,136 +1,239 @@
 <template>
-  <div class="min-h-screen flex">
+  <div class="min-h-screen flex bg-gray-950">
+    <!-- Mobile overlay -->
+    <div 
+      v-if="sidebarOpen" 
+      class="fixed inset-0 z-40 lg:hidden"
+      @click="sidebarOpen = false"
+    >
+      <div class="absolute inset-0 bg-gray-950/80 backdrop-blur-sm"></div>
+    </div>
+
     <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="p-6">
-        <!-- Logo -->
-        <NuxtLink to="/" class="flex items-center space-x-3 mb-8">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-          </div>
-          <h1 class="text-xl font-bold gradient-text">Feedback Hub</h1>
-        </NuxtLink>
-        
-        <!-- Navigation -->
-        <nav class="space-y-2">
-          <NuxtLink to="/" class="nav-link" :class="{ active: $route.path === '/' }">
-            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v3H8V5z"/>
-            </svg>
-            Dashboard
+    <aside 
+      class="sidebar transform"
+      :class="{ '-translate-x-full lg:translate-x-0': !sidebarOpen }"
+    >
+      <div class="flex flex-col h-full">
+        <!-- Logo Section -->
+        <div class="p-6 border-b border-gray-800/50">
+          <NuxtLink to="/" class="flex items-center gap-3 group">
+            <div class="relative">
+              <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/25 group-hover:shadow-primary-500/40 transition-all duration-200">
+                <ChatBubbleBottomCenterTextIcon class="w-5 h-5 text-white" />
+              </div>
+              <div class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-gray-950"></div>
+            </div>
+            <div>
+              <h1 class="text-lg font-bold gradient-text">FeedbackHub</h1>
+              <p class="text-xs text-gray-500">v2.0</p>
+            </div>
           </NuxtLink>
-          
-          <NuxtLink to="/forums" class="nav-link" :class="{ active: $route.path.startsWith('/forums') }">
-            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-1M15 8V6a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2h2m8-8V6a2 2 0 00-2-2H9a2 2 0 00-2 2v2m8 4V8a2 2 0 00-2-2H9a2 2 0 00-2 2v8a2 2 0 002 2h6l4 4v-4z"/>
-            </svg>
-            Forums
-          </NuxtLink>
-          
-          <NuxtLink to="/feedback" class="nav-link" :class="{ active: $route.path.startsWith('/feedback') }">
-            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-            </svg>
-            Feedback
-          </NuxtLink>
-        </nav>
-        
-        <!-- Divider -->
-        <div class="my-8 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
-        
-        <!-- User Section -->
-        <div v-if="authStore.isAuthenticated" class="space-y-2">
-          <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Account
-          </div>
-          <NuxtLink to="/dashboard" class="nav-link">
-            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-            </svg>
-            Profile
-          </NuxtLink>
-          <button @click="authStore.logout" class="nav-link w-full text-left">
-            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-            </svg>
-            Sign Out
-          </button>
         </div>
         
-        <div v-else class="space-y-3">
-          <NuxtLink to="/login" class="btn btn-ghost w-full justify-start">
-            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
-            </svg>
-            Sign In
-          </NuxtLink>
-          <NuxtLink to="/register" class="btn btn-primary w-full justify-start">
-            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-            </svg>
-            Get Started
-          </NuxtLink>
+        <!-- Navigation -->
+        <nav class="flex-1 p-4 space-y-1">
+          <div class="mb-6">
+            <div class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Main
+            </div>
+            <div class="space-y-1">
+              <NuxtLink to="/" class="nav-link" :class="{ active: $route.path === '/' }">
+                <HomeIcon class="w-5 h-5" />
+                Dashboard
+              </NuxtLink>
+              
+              <NuxtLink to="/forums" class="nav-link" :class="{ active: $route.path.startsWith('/forums') }">
+                <ChatBubbleLeftRightIcon class="w-5 h-5" />
+                Forums
+                <span class="ml-auto badge badge-secondary">12</span>
+              </NuxtLink>
+              
+              <NuxtLink to="/feedback" class="nav-link" :class="{ active: $route.path.startsWith('/feedback') }">
+                <ClipboardDocumentListIcon class="w-5 h-5" />
+                Feedback
+                <span class="ml-auto badge badge-primary">24</span>
+              </NuxtLink>
+            </div>
+          </div>
+          
+          <!-- User Section -->
+          <div v-if="authStore?.isAuthenticated">
+            <div class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Account
+            </div>
+            <div class="space-y-1">
+              <NuxtLink to="/dashboard" class="nav-link">
+                <UserIcon class="w-5 h-5" />
+                Profile
+              </NuxtLink>
+              <NuxtLink to="/settings" class="nav-link">
+                <Cog6ToothIcon class="w-5 h-5" />
+                Settings
+              </NuxtLink>
+              <button @click="authStore?.logout" class="nav-link w-full text-left">
+                <ArrowRightOnRectangleIcon class="w-5 h-5" />
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </nav>
+        
+        <!-- Auth Section for non-authenticated users -->
+        <div v-if="!authStore?.isAuthenticated" class="p-4 border-t border-gray-800/50">
+          <div class="space-y-2">
+            <NuxtLink to="/login" class="btn btn-ghost w-full justify-start">
+              <ArrowRightOnRectangleIcon class="w-5 h-5" />
+              Sign In
+            </NuxtLink>
+            <NuxtLink to="/register" class="btn btn-primary w-full justify-start">
+              <UserPlusIcon class="w-5 h-5" />
+              Get Started
+            </NuxtLink>
+          </div>
+        </div>
+
+        <!-- User Profile (for authenticated users) -->
+        <div v-if="authStore?.isAuthenticated" class="p-4 border-t border-gray-800/50">
+          <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-800/30 border border-gray-700/50">
+            <div class="relative">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-sm font-semibold text-white">
+                {{ authStore.user?.email?.charAt(0).toUpperCase() }}
+              </div>
+              <div class="status-dot status-online absolute -bottom-0.5 -right-0.5"></div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-200 truncate">
+                {{ authStore.user?.username || authStore.user?.email }}
+              </p>
+              <p class="text-xs text-gray-400 truncate">{{ authStore.user?.email }}</p>
+            </div>
+          </div>
         </div>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 ml-64">
+    <div class="flex-1 lg:ml-64 flex flex-col min-h-screen">
       <!-- Top Header -->
-      <header class="h-16 glass border-b border-slate-800/50 flex items-center justify-between px-6 sticky top-0 z-40">
-        <div class="flex items-center space-x-4">
-          <h2 class="text-lg font-semibold text-slate-100">
-            {{ getPageTitle() }}
-          </h2>
-        </div>
-        
-        <div class="flex items-center space-x-4">
-          <!-- Quick Actions -->
-          <div class="flex items-center space-x-2">
+      <header class="glass border-b border-gray-800/50 sticky top-0 z-30">
+        <div class="flex items-center justify-between h-16 px-4 lg:px-6">
+          <!-- Mobile menu button -->
+          <button
+            @click="sidebarOpen = !sidebarOpen"
+            class="lg:hidden p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-800/50 rounded-lg transition-colors"
+          >
+            <Bars3Icon v-if="!sidebarOpen" class="w-6 h-6" />
+            <XMarkIcon v-else class="w-6 h-6" />
+          </button>
+
+          <!-- Page title -->
+          <div class="flex items-center gap-4">
+            <div>
+              <h2 class="text-lg font-semibold text-gray-100">
+                {{ pageTitle }}
+              </h2>
+              <p v-if="pageDescription" class="text-sm text-gray-400">
+                {{ pageDescription }}
+              </p>
+            </div>
+          </div>
+          
+          <!-- Header actions -->
+          <div class="flex items-center gap-3">
+            <!-- Quick Actions -->
             <NuxtLink 
               v-if="$route.path.startsWith('/feedback')" 
               to="/feedback/new" 
               class="btn btn-primary btn-sm"
             >
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-              </svg>
-              Submit Feedback
+              <PlusIcon class="w-4 h-4" />
+              <span class="hidden sm:inline">Submit Feedback</span>
             </NuxtLink>
-          </div>
-          
-          <!-- User Avatar -->
-          <div v-if="authStore.isAuthenticated" class="flex items-center space-x-3">
-            <div class="flex items-center space-x-2">
-              <div class="status-dot status-online"></div>
-              <span class="text-sm text-slate-400">{{ authStore.user?.email }}</span>
-            </div>
+
+            <!-- Notifications -->
+            <button class="relative p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-800/50 rounded-lg transition-colors">
+              <BellIcon class="w-5 h-5" />
+              <span class="absolute top-1 right-1 w-2 h-2 bg-primary-500 rounded-full"></span>
+            </button>
+
+            <!-- Search -->
+            <button class="hidden sm:flex p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-800/50 rounded-lg transition-colors">
+              <MagnifyingGlassIcon class="w-5 h-5" />
+            </button>
           </div>
         </div>
       </header>
 
       <!-- Page Content -->
-      <div class="p-6">
-        <slot />
-      </div>
-    </main>
+      <main class="flex-1 p-4 lg:p-6">
+        <div class="fade-in">
+          <slot />
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import {
+  HomeIcon,
+  ChatBubbleLeftRightIcon,
+  ClipboardDocumentListIcon,
+  UserIcon,
+  Cog6ToothIcon,
+  ArrowRightOnRectangleIcon,
+  UserPlusIcon,
+  ChatBubbleBottomCenterTextIcon,
+  Bars3Icon,
+  XMarkIcon,
+  PlusIcon,
+  BellIcon,
+  MagnifyingGlassIcon
+} from '@heroicons/vue/24/outline'
+
 const authStore = useAuthStore()
 const route = useRoute()
 
-function getPageTitle() {
+// Reactive state for mobile sidebar
+const sidebarOpen = ref(false)
+
+// Page metadata
+const pageTitle = computed(() => {
   const path = route.path
   if (path === '/') return 'Dashboard'
   if (path.startsWith('/forums')) return 'Forums'
   if (path.startsWith('/feedback')) return 'Feedback'
   if (path === '/login') return 'Sign In'
   if (path === '/register') return 'Sign Up'
-  return 'Feedback Hub'
-}
+  return 'FeedbackHub'
+})
+
+const pageDescription = computed(() => {
+  const path = route.path
+  if (path === '/') return 'Overview of your feedback and forum activity'
+  if (path.startsWith('/forums')) return 'Community discussions and support'
+  if (path.startsWith('/feedback')) return 'Submit and browse user feedback'
+  return null
+})
+
+// Close sidebar when route changes (mobile)
+watch(() => route.path, () => {
+  sidebarOpen.value = false
+})
+
+// Close sidebar on escape key
+onMounted(() => {
+  const handleEscape = (e: Event) => {
+    const keyboardEvent = e as KeyboardEvent
+    if (keyboardEvent.key === 'Escape') {
+      sidebarOpen.value = false
+    }
+  }
+  document.addEventListener('keydown', handleEscape)
+  
+  onUnmounted(() => {
+    document.removeEventListener('keydown', handleEscape)
+  })
+})
 </script>

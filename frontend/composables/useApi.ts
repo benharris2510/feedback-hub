@@ -4,7 +4,7 @@ export const useApi = () => {
   
   const api = $fetch.create({
     baseURL: config.public.apiUrl,
-    onRequest({ request, options }) {
+    onRequest({ options }) {
       if (authStore.accessToken) {
         options.headers = {
           ...options.headers,
@@ -12,7 +12,7 @@ export const useApi = () => {
         }
       }
     },
-    onResponseError({ request, response, options }) {
+    onResponseError({ response }) {
       if (response.status === 401 && authStore.isAuthenticated) {
         // Token expired, try to refresh
         authStore.refreshAccessToken().then((success) => {

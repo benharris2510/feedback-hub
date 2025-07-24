@@ -214,7 +214,7 @@ const submitReply = async () => {
     showReplyForm.value = false
     await refreshReplies()
   } catch (error) {
-    console.error('Failed to post reply:', error)
+    // Silently handle reply submission errors - user will see form still submitted and can retry
   } finally {
     submittingReply.value = false
   }

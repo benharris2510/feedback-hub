@@ -210,7 +210,7 @@ const createPost = async () => {
     showNewPostForm.value = false
     await refreshPosts()
   } catch (error) {
-    console.error('Failed to create post:', error)
+    // Silently handle post creation errors - user will see form still submitted and can retry
   } finally {
     submittingPost.value = false
   }

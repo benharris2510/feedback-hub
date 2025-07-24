@@ -252,7 +252,7 @@ const voteFeedback = async () => {
     await api(`/feedback/${feedbackId}/vote`, { method: 'POST' })
     await refreshFeedback()
   } catch (error) {
-    console.error('Failed to vote:', error)
+    // Handle vote error silently
   }
 }
 
@@ -264,7 +264,7 @@ const updateStatus = async () => {
     })
     await refreshFeedback()
   } catch (error) {
-    console.error('Failed to update status:', error)
+    // Handle status update error silently
   }
 }
 
@@ -276,7 +276,7 @@ const updatePriority = async () => {
     })
     await refreshFeedback()
   } catch (error) {
-    console.error('Failed to update priority:', error)
+    // Handle priority update error silently
   }
 }
 
@@ -296,13 +296,13 @@ const submitComment = async () => {
     showCommentForm.value = false
     await refreshComments()
   } catch (error) {
-    console.error('Failed to post comment:', error)
+    // Handle comment submission error silently
   } finally {
     submittingComment.value = false
   }
 }
 
-const canDeleteComment = (comment: any) => {
+const canDeleteComment = (comment: Record<string, unknown>) => {
   return authStore.isAdmin || comment.user_id === authStore.user?.id
 }
 
@@ -315,7 +315,7 @@ const deleteComment = async (commentId: number) => {
     })
     await refreshComments()
   } catch (error) {
-    console.error('Failed to delete comment:', error)
+    // Handle comment deletion error silently
   }
 }
 
